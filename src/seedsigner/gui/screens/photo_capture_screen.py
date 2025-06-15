@@ -3,7 +3,9 @@ from dataclasses import dataclass
 from gettext import gettext as _
 from PIL import Image
 
+import os
 from seedsigner.gui.components import GUIConstants, Fonts
+from seedsigner.gui import renderer
 from seedsigner.gui.screens.screen import BaseScreen
 from seedsigner.gui.screens.scan_screens import BaseThread
 from seedsigner.hardware.camera import Camera
