@@ -8,6 +8,7 @@ from seedsigner.gui import renderer
 from seedsigner.gui.components import GUIConstants, Fonts
 from seedsigner.models.decode_qr import DecodeQR
 from seedsigner.models.threads import BaseThread, ThreadsafeCounter
+from .photo_capture_screen import PhotoCaptureScreen
 
 from .screen import BaseScreen
 
@@ -54,6 +55,9 @@ class ScanScreen(BaseScreen):
         from seedsigner.hardware.camera import Camera
         # Initialize the base class
         super().__post_init__()
+        
+        # TODO: Arrange this with UI elements rather than text
+        self.instructions_text = "< " + _("back") + "  |  " + _(self.instructions_text)
 
         # TODO: Arrange this with UI elements rather than text
         self.instructions_text = "< " + _("back") + "  |  " + _(self.instructions_text)

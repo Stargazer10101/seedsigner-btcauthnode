@@ -210,6 +210,25 @@ class ScanAddressView(ScanView):
 
 
 
+class PhotoCaptureView(View):
+    def __init__(self):
+        super().__init__()
+        self.instructions_text = _mft("Press button to take photo")
+
+    def run(self):
+        from seedsigner.gui.screens.scan_screens import PhotoCaptureScreen
+        
+        # Start the live preview and photo capture mode
+        self.run_screen(
+            PhotoCaptureScreen,
+            instructions_text=self.instructions_text
+        )
+
+        # Return to main menu after capture
+        return Destination(MainMenuView)
+
+
+
 class ScanInvalidQRTypeView(View):
     def run(self):
         from seedsigner.gui.screens import WarningScreen
