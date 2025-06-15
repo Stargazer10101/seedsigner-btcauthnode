@@ -7,7 +7,7 @@ import os
 from seedsigner.gui.components import GUIConstants, Fonts
 from seedsigner.gui import renderer
 from seedsigner.gui.screens.screen import BaseScreen
-from seedsigner.gui.screens.scan_screens import BaseThread
+
 from seedsigner.hardware.camera import Camera
 from seedsigner.models.settings import Settings
 from seedsigner.models.singleton import Singleton
@@ -39,11 +39,12 @@ class PhotoCaptureScreen(BaseScreen):
         self.threads.append(PhotoCaptureScreen.LivePreviewThread(
             renderer=self.renderer,
             instructions_text=self.instructions_text,
-            render_rect=self.render_rect
+            render_rect=self.render_rect,
+            camera=self.camera
         ))
 
     class LivePreviewThread(BaseThread):
-        def __init__(self, renderer: renderer.Renderer, instructions_text: str, render_rect: tuple[int,int,int,int]):
+        def __init__(self, renderer: renderer.Renderer, instructions_text: str, render_rect: tuple[int,int,int,int], camera: Camera):
             self.camera = Camera.get_instance()
             self.renderer = renderer
             self.instructions_text = instructions_text
@@ -61,8 +62,9 @@ class PhotoCaptureScreen(BaseScreen):
                 if self.stopped():
                     break
 
-                # Capture frame
-                frame = self.camera.capture_frame()
+                # Capture frame for preview
+                frame = self.camera.capture_frame(resolution=self.resolution)
+                frame = self.camera.capture_frame(single_frame_mode=True)
                 
                 # Convert to RGB for display
                 frame = frame.convert('RGB')
@@ -84,13 +86,16 @@ class PhotoCaptureScreen(BaseScreen):
                 # Check for button press (using center button)
                 if self.controller.buttons.check_for_low(key=HardwareButtonsConstants.KEY_PRESS):
                     try:
-                        # Capture photo
+                        # Capture photo using single frame mode for better quality
                         timestamp = time.strftime("%Y%m%d_%H%M%S")
                         photo_path = os.path.join(PHOTO_DIR, f"photo_{timestamp}.jpg")
                         print(f"Attempting to save photo to: {photo_path}")  # Debug print
                         
-                        # Save the current frame
-                        frame.save(photo_path)
+                        # Capture a high-quality frame
+                        high_quality_frame = self.camera.capture_frame()
+                        
+                        # Save the high-quality frame
+                        high_quality_frame.save(photo_path)
                         
                         # Show confirmation
                         self.renderer.draw_text(

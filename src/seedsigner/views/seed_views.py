@@ -1642,7 +1642,7 @@ class SeedTranscribeSeedQRConfirmScanView(View):
         self.decoder = DecodeQR(wordlist_language_code=wordlist_language_code)
 
     def run(self):
-        from seedsigner.gui.screens.scan_screens import ScanScreen
+        from seedsigner.gui.screens.qr_scan_screens import ScanScreen
 
         # Run the live preview and QR code capture process
         # TODO: Does this belong in its own BaseThread?

@@ -7,7 +7,7 @@ from typing import List
 
 from seedsigner.helpers.l10n import mark_for_translation as _mft
 from seedsigner.gui.components import Button, CheckboxButton, CheckedSelectionButton, FontAwesomeIconConstants, Fonts, GUIConstants, Icon, IconButton, IconTextLine, SeedSignerIconConstants, TextArea
-from seedsigner.gui.screens.scan_screens import ScanScreen
+from seedsigner.gui.screens.qr_scan_screens import ScanScreen
 from seedsigner.gui.screens.screen import BaseScreen, BaseTopNavScreen, ButtonListScreen, ButtonOption
 from seedsigner.hardware.buttons import HardwareButtonsConstants
 from seedsigner.hardware.camera import Camera

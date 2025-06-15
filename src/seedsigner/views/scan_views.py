@@ -40,7 +40,7 @@ class ScanView(View):
 
 
     def run(self):
-        from seedsigner.gui.screens.scan_screens import ScanScreen
+        from seedsigner.gui.screens.qr_scan_screens import ScanScreen
 
         # Start the live preview and background QR reading
         self.run_screen(
@@ -216,7 +216,7 @@ class PhotoCaptureView(View):
         self.instructions_text = _mft("Press button to take photo")
 
     def run(self):
-        from seedsigner.gui.screens.scan_screens import PhotoCaptureScreen
+        from seedsigner.gui.screens.photo_capture_screen import PhotoCaptureScreen
         
         # Start the live preview and photo capture mode
         self.run_screen(
