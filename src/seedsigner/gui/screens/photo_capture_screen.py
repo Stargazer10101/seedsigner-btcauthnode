@@ -83,23 +83,39 @@ class PhotoCaptureScreen(BaseScreen):
                 
                 # Check for button press
                 if self.controller.buttons.check_for_low(button=ButtonOption.RIGHT):
-                    # Capture photo
-                    timestamp = time.strftime("%Y%m%d_%H%M%S")
-                    photo_path = os.path.join(PHOTO_DIR, f"photo_{timestamp}.jpg")
-                    frame.save(photo_path)
-                    
-                    # Show confirmation
-                    self.renderer.draw_text(
-                        text="Photo saved!",
-                        font=Fonts.get_font(GUIConstants.BODY_FONT_NAME, GUIConstants.BODY_FONT_SIZE),
-                        pos=(GUIConstants.EDGE_PADDING, self.render_height - GUIConstants.EDGE_PADDING - GUIConstants.BODY_FONT_SIZE),
-                        background_color=GUIConstants.BACKGROUND_COLOR,
-                    )
-                    self.renderer.show_image()
-                    time.sleep(1)  # Show confirmation for 1 second
-                    
-                    # Stop the thread
-                    self.stop()
+                    try:
+                        # Capture photo
+                        timestamp = time.strftime("%Y%m%d_%H%M%S")
+                        photo_path = os.path.join(PHOTO_DIR, f"photo_{timestamp}.jpg")
+                        print(f"Attempting to save photo to: {photo_path}")  # Debug print
+                        
+                        # Save the current frame
+                        frame.save(photo_path)
+                        
+                        # Show confirmation
+                        self.renderer.draw_text(
+                            text=f"Photo saved to:\n{os.path.basename(photo_path)}",
+                            font=Fonts.get_font(GUIConstants.BODY_FONT_NAME, GUIConstants.BODY_FONT_SIZE),
+                            pos=(GUIConstants.EDGE_PADDING, self.render_height - GUIConstants.EDGE_PADDING - 3*GUIConstants.BODY_FONT_SIZE),
+                            background_color=GUIConstants.BACKGROUND_COLOR,
+                        )
+                        self.renderer.show_image()
+                        time.sleep(3)  # Show confirmation for 3 seconds
+                        
+                        # Stop the thread
+                        self.stop()
+                        
+                    except Exception as e:
+                        print(f"Error saving photo: {str(e)}")  # Debug print
+                        self.renderer.draw_text(
+                            text="Error saving photo",
+                            font=Fonts.get_font(GUIConstants.BODY_FONT_NAME, GUIConstants.BODY_FONT_SIZE),
+                            pos=(GUIConstants.EDGE_PADDING, self.render_height - GUIConstants.EDGE_PADDING - 3*GUIConstants.BODY_FONT_SIZE),
+                            background_color=GUIConstants.BACKGROUND_COLOR,
+                        )
+                        self.renderer.show_image()
+                        time.sleep(3)  # Show error message for 3 seconds
+                        self.stop()
 
     def on_exit(self):
         self.camera.stop_single_frame_mode()
