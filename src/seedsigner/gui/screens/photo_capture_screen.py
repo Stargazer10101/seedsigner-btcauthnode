@@ -81,8 +81,8 @@ class PhotoCaptureScreen(BaseScreen):
                     background_color=GUIConstants.BACKGROUND_COLOR,
                 )
                 
-                # Check for button press
-                if self.controller.buttons.check_for_low(button=ButtonOption.RIGHT):
+                # Check for button press (using center button)
+                if self.controller.buttons.check_for_low(key=HardwareButtonsConstants.KEY_PRESS):
                     try:
                         # Capture photo
                         timestamp = time.strftime("%Y%m%d_%H%M%S")
