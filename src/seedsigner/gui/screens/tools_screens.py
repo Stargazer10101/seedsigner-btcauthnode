@@ -282,6 +282,33 @@ class ToolsCoinEntropySetwiseEntryScreen(KeyboardScreen):
             text=_("Bits needed: {}").format(self.required_bits),
             screen_y=self.components[-1].screen_y + self.components[-1].height,
         ))
+        
+        # Add dynamic progress display for current set
+        self.progress_text = TextArea(
+            # TRANSLATOR_NOTE: Shows current coin flip progress within the current set
+            # "current_flip" = current flip number (1-based)
+            # "total_flips" = total flips needed for this set
+            text=_("This set: {current_flip}/{total_flips}").format(
+                current_flip=1,
+                total_flips=self.required_bits
+            ),
+            screen_y=self.components[-1].screen_y + self.components[-1].height,
+        )
+        self.components.append(self.progress_text)
+
+    def update_title(self) -> bool:
+        # Update the progress display to show current coin flip count
+        if self.progress_text:
+            # TRANSLATOR_NOTE: Updates the progress display to show the current coin flip number and total flips required for this set.
+            # "current_flip" = current flip number (1-based; e.g., 1, 2, 3, etc.).
+            # "total_flips" = total number of flips required for this set
+            self.progress_text.text = _("This set: {current_flip}/{total_flips}").format(
+                current_flip=self.cursor_position + 1,
+                total_flips=self.required_bits
+            )
+            # Re-render the progress text area
+            self.progress_text.render()
+        return False
 
 
 @dataclass
