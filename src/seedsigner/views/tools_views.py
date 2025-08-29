@@ -391,8 +391,7 @@ class ToolsCoinEntropySetwiseEntryView(View):
 
         if self.current_set <= self.total_sets:
             # Convert the 11-bit set to a BIP-39 word
-            word_index = int(ret, 2)
-            word = Seed.get_wordlist(wordlist_language_code)[word_index]
+            word = mnemonic_generation.get_bip39_word(ret, wordlist_language_code=wordlist_language_code)
             self.mnemonic.append(word)
 
         # Navigate to display the word or finalize if done
@@ -410,8 +409,7 @@ class ToolsCoinEntropySetwiseEntryView(View):
         else:
             # Final set collected; generate the full mnemonic
             full_entropy = self.bits_collected[:self.total_flips]
-            entropy_bytes = int(full_entropy, 2).to_bytes(16 if self.total_flips == 128 else 32, byteorder='big')
-            mnemonic = mnemonic_generation.generate_mnemonic_from_bytes(entropy_bytes, wordlist_language_code=wordlist_language_code)
+            mnemonic = mnemonic_generation.generate_mnemonic_from_coin_flips(full_entropy, wordlist_language_code=wordlist_language_code)
             self.mnemonic.append(mnemonic[-1])
 
             # Create and store seed

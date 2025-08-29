@@ -114,6 +114,17 @@ def generate_mnemonic_from_coin_flips(coin_flips: str, wordlist_language_code: s
 
 
 
+def get_bip39_word(bits: str, wordlist_language_code: str = SettingsConstants.WORDLIST_LANGUAGE__ENGLISH) -> str:
+    """ Convert 11-bit string to BIP-39 word """
+    if len(bits) != 11:
+        raise ValueError("Bits must be exactly 11 bits long")
+    if not all(c in "01" for c in bits):
+        raise ValueError("Bits must only contain '0' or '1'")
+    
+    index = int(bits, 2)
+    return Seed.get_wordlist(wordlist_language_code)[index]
+
+
 def get_partial_final_word(coin_flips: str, wordlist_language_code: str = SettingsConstants.WORDLIST_LANGUAGE__ENGLISH) -> str:
     """ Look up the partial final word for the given coin flips.
         7 coin flips: 0101010 + **** where the final 4 bits will be replaced with the checksum
