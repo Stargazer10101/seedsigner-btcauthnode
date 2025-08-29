@@ -225,8 +225,8 @@ class ToolsCoinFlipEntryScreen(KeyboardScreen):
     mode: str = "all_at_once"  # "all_at_once", "setwise", "final_bits"
     current_set: int = 1
     total_sets: int = 12
-    # Number of coin flips needed to generate a single BIP-39 word.
-    required_bits: int = 11
+    # Number of coin flips needed to generate a single BIP-39 word
+    num_flips_required: int = 11
 
     def __post_init__(self):
         # Set up mode-specific parameters
@@ -240,7 +240,7 @@ class ToolsCoinFlipEntryScreen(KeyboardScreen):
                 current_set=self.current_set,
                 total_sets=self.total_sets
             )
-            self.return_after_n_chars = self.required_bits
+            self.return_after_n_chars = self.num_flips_required
         elif self.mode == "final_bits":
             # TRANSLATOR_NOTE: current coin-flip number vs total flips (e.g. flip 3 of 4)
             self.title = _("Coin Flip {}/{}").format(1, self.return_after_n_chars)
@@ -285,7 +285,7 @@ class ToolsCoinFlipEntryScreen(KeyboardScreen):
         # Add mode-specific components
         if self.mode == "setwise":
             self.components.append(TextArea(
-                text=_("Flips needed: {}").format(self.required_bits),
+                text=_("Flips needed: {}").format(self.num_flips_required),
                 screen_y = self.components[-1].screen_y + self.components[-1].height + GUIConstants.COMPONENT_PADDING,
             ))
             
@@ -296,7 +296,7 @@ class ToolsCoinFlipEntryScreen(KeyboardScreen):
                 # "total_flips" = total flips needed for this set
                 text=_("This set: {current_flip}/{total_flips}").format(
                     current_flip=1,
-                    total_flips=self.required_bits
+                    total_flips=self.num_flips_required
                 ),
                 screen_y = self.components[-1].screen_y + self.components[-1].height + GUIConstants.COMPONENT_PADDING,
             )
@@ -311,7 +311,7 @@ class ToolsCoinFlipEntryScreen(KeyboardScreen):
                 # "total_flips" = total number of flips required for this set
                 self.progress_text.text = _("This set: {current_flip}/{total_flips}").format(
                     current_flip=self.cursor_position + 1,
-                    total_flips=self.required_bits
+                    total_flips=self.num_flips_required
                 )
                 # Re-render the progress text area
                 self.progress_text.render()
@@ -329,6 +329,46 @@ class ToolsCoinFlipEntryScreen(KeyboardScreen):
                 num_total_flips=self.return_after_n_chars
             )
             return True
+
+
+@dataclass
+class ToolsCoinEntropySetwiseBip39WordScreen(BaseTopNavScreen):
+    """Screen to display the BIP-39 word generated from coin flips with the bits that created it."""
+    current_set: int = 1
+    total_sets: int = 12
+    word: str = ""
+    bits: str = ""
+
+    def __post_init__(self):
+        # TRANSLATOR_NOTE: Shows which word in the mnemonic phrase we're currently displaying
+        self.title = _("Word {current_set}/{total_sets}").format(
+            current_set=self.current_set,
+            total_sets=self.total_sets
+        )
+        super().__post_init__()
+
+        # Display the bits that generated this word
+        self.components.append(TextArea(
+            # TRANSLATOR_NOTE: Shows the 11 coin flips (bits) that generated the displayed word
+            text=_("Bits: {}").format(self.bits),
+            screen_y=self.top_nav.height + GUIConstants.COMPONENT_PADDING,
+        ))
+
+        # Display the generated word prominently
+        self.components.append(TextArea(
+            # TRANSLATOR_NOTE: The BIP-39 word generated from the coin flips
+            text=self.word,
+            font_name=GUIConstants.FIXED_WIDTH_EMPHASIS_FONT_NAME,
+            font_size=GUIConstants.get_button_font_size() + 4,
+            screen_y=self.components[-1].screen_y + self.components[-1].height + 2*GUIConstants.COMPONENT_PADDING,
+        ))
+
+        # Add a "Next" button at the bottom
+        self.components.append(Button(
+            text=_("Next"),
+            screen_y=self.canvas_height - GUIConstants.BUTTON_HEIGHT - GUIConstants.EDGE_PADDING,
+            width=self.canvas_width - 2*GUIConstants.EDGE_PADDING,
+        ))
 
 
 

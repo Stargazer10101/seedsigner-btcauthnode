@@ -374,7 +374,6 @@ class ToolsCoinEntropySetwiseEntryView(View):
         self.last_set_bits = 7 if total_flips == 128 else 3
 
     def run(self):
-        wordlist_language_code = self.settings.get_value(SettingsConstants.SETTING__WORDLIST_LANGUAGE)
         required_bits = self.last_set_bits if self.current_set == self.total_sets + 1 else 11
 
         ret = self.run_screen(
@@ -391,6 +390,7 @@ class ToolsCoinEntropySetwiseEntryView(View):
 
         if self.current_set <= self.total_sets:
             # Convert the 11-bit set to a BIP-39 word
+            wordlist_language_code = self.settings.get_value(SettingsConstants.SETTING__WORDLIST_LANGUAGE)
             word = mnemonic_generation.get_bip39_word(ret, wordlist_language_code=wordlist_language_code)
             self.mnemonic.append(word)
 
@@ -403,7 +403,8 @@ class ToolsCoinEntropySetwiseEntryView(View):
                     "current_set": self.current_set,
                     "bits_collected": self.bits_collected,
                     "mnemonic": self.mnemonic,
-                    "word": word
+                    "word": word,
+                    "bits": ret
                 }
             )
         else:
@@ -421,20 +422,24 @@ class ToolsCoinEntropySetwiseEntryView(View):
 
 class ToolsCoinEntropySetwiseBip39WordView(View):
     """ Displays the BIP-39 word for the current set of coin flips. """
-    def __init__(self, total_flips: int, current_set: int, bits_collected: str, mnemonic: list, word: str):
+    def __init__(self, total_flips: int, current_set: int, bits_collected: str, mnemonic: list, word: str, bits: str):
         super().__init__()
         self.total_flips = total_flips
         self.current_set = current_set
         self.bits_collected = bits_collected
         self.mnemonic = mnemonic
         self.word = word
+        self.bits = bits
 
     def run(self):
+        from seedsigner.gui.screens.tools_screens import ToolsCoinEntropySetwiseBip39WordScreen
+        
         self.run_screen(
-            ButtonListScreen,
-            title=_("word {}").format(self.current_set),
-            button_data=[ButtonOption(self.word)],
-            is_button_text_centered=True
+            ToolsCoinEntropySetwiseBip39WordScreen,
+            current_set=self.current_set,
+            total_sets=11 if self.total_flips == 128 else 23,
+            word=self.word,
+            bits=self.bits
         )
 
         # Proceed to the next set or finalize
