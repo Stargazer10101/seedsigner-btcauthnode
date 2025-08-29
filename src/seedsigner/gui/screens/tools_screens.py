@@ -225,6 +225,7 @@ class ToolsCoinFlipEntryScreen(KeyboardScreen):
     mode: str = "all_at_once"  # "all_at_once", "setwise", "final_bits"
     current_set: int = 1
     total_sets: int = 12
+    # Number of coin flips needed to generate a single BIP-39 word.
     required_bits: int = 11
 
     def __post_init__(self):
@@ -250,7 +251,7 @@ class ToolsCoinFlipEntryScreen(KeyboardScreen):
         # Specify the keys in the keyboard - use larger buttons with full words
         self.rows = 2
         self.cols = 2
-        self.key_height = GUIConstants.get_top_nav_title_font_size() + GUIConstants.EDGE_PADDING//4 + 2*GUIConstants.EDGE_PADDING
+        self.key_height = GUIConstants.BUTTON_HEIGHT
         # Use single characters for the keyboard layout, but we'll customize the display
         self.keys_charset = "HT"
 
@@ -284,7 +285,7 @@ class ToolsCoinFlipEntryScreen(KeyboardScreen):
         # Add mode-specific components
         if self.mode == "setwise":
             self.components.append(TextArea(
-                text=_("Bits needed: {}").format(self.required_bits),
+                text=_("Flips needed: {}").format(self.required_bits),
                 screen_y = self.components[-1].screen_y + self.components[-1].height + GUIConstants.COMPONENT_PADDING,
             ))
             
